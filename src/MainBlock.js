@@ -12,16 +12,12 @@ function MainBlock() {
   // Получение данных о погоде
   useEffect(() => {
     const getWeather = async () => {
-      try {
-        const data = await fetchWeather(selectedCity);
-        if (data) {
-          setWeatherData(data);
-          setError("");
-        } else {
-          setError("Не удалось получить данные о погоде.");
-        }
-      } catch (e) {
-        setError("Ошибка при запросе данных о погоде.");
+      const data = await fetchWeather(selectedCity);
+      if (data) {
+        setWeatherData(data);
+        setError("");
+      } else {
+        setError("Не удалось получить данные о погоде.");
       }
     };
 

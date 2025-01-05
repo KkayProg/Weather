@@ -78,16 +78,13 @@ export const ThisDay = ({ selectedCity }) => {
     return <img src={iconUrl} alt="Weather Icon" />;
   }
 
-  
-  // Использование компонента
-
   return (
     <div className="this__day">
       <div className="top__block">
         <div className="top__block_wrapper">
-          <div className="temp">
-            {weatherData ? `${Math.round(weatherData.main.temp)}°` : "Загрузка..."}
-          </div>
+        <div className="temp">
+          {weatherData ? `${Math.round(weatherData.main.temp)}°` : "Загрузка..."}
+        </div>
           <div className="this-date">Сегодня</div>
         </div>
         <WeatherIcon icon={weatherData?.weather?.[0]?.icon || ""} />
@@ -104,3 +101,4 @@ export const ThisDay = ({ selectedCity }) => {
     </div>
   );
 };
+
