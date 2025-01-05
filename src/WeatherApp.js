@@ -32,6 +32,33 @@ const WeatherApp = () => {
     getWeather();
   }, [city]);
 
+  // Функция для получения текущего города по геолокации
+  const getUserCity = async () => {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(async (position) => {
+            const { latitude, longitude } = position.coords;
+            try {
+                const response = await fetch(
+                    `https://api.openweathermap.org/data/2.5/reverse?lat=${latitude}&lon=${longitude}&appid=${API_KEY}&lang=ru`
+                );
+                const data = await response.json();
+                const userCity = data[0].name; // Получаем название города
+                setCity(userCity); // Устанавливаем город пользователя
+            } catch (error) {
+                setError('Не удалось определить город.');
+            }
+        });
+    } else {
+        setError('Геолокация не поддерживается этим браузером.');
+    }
+};
+
+
+  // Вызов функции при монтировании компонента
+  useEffect(() => {
+    getUserCity();
+  }, []);
+
   // Обработчик добавления нового города
   const handleInputChange = (inputValue) => {
     if (!options.find((option) => option.value === inputValue)) {
@@ -77,4 +104,3 @@ const WeatherApp = () => {
 };
 
 export default WeatherApp;
-

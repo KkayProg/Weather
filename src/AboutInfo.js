@@ -2,6 +2,7 @@ export const AboutInfo = ({ weatherData }) => {
     if (!weatherData) {
       return <p>Загрузка данных...</p>; // Пока данные не загружены
     }
+
   
     return (
       <div className="info__main">

@@ -9,17 +9,19 @@ function MainBlock() {
   const [weatherData, setWeatherData] = useState(null); // Данные о погоде
   const [error, setError] = useState(""); // Ошибка
 
-
-  
   // Получение данных о погоде
   useEffect(() => {
     const getWeather = async () => {
-      const data = await fetchWeather(selectedCity);
-      if (data) {
-        setWeatherData(data);
-        setError("");
-      } else {
-        setError("Не удалось получить данные о погоде.");
+      try {
+        const data = await fetchWeather(selectedCity);
+        if (data) {
+          setWeatherData(data);
+          setError("");
+        } else {
+          setError("Не удалось получить данные о погоде.");
+        }
+      } catch (e) {
+        setError("Ошибка при запросе данных о погоде.");
       }
     };
 

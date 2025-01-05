@@ -1,6 +1,5 @@
 import React from 'react';
 import MainBlock from './MainBlock';
-import WeatherApp from './WeatherApp';
 
 function App() {
   return (
