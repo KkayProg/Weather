@@ -1,28 +1,45 @@
 import React, { useState, useEffect } from "react";
 import Select from "react-select";
-
-const fetchCities = async (query) => {
-  const response = await fetch(`https://nominatim.openstreetmap.org/search?q=${query}&format=json&addressdetails=1&language=ru`);
-  const data = await response.json();
-  
-  return data.map(city => ({
-    value: city.address.city,  
-    label: city.address.city, 
-  }));
-};
+import citiesData from "./data/world-cities.json"; // Подключаем JSON с городами
 
 export const MainSelect = ({ selectedCity, setSelectedCity }) => {
   const [options, setOptions] = useState([]);
-  const [inputValue, setInputValue] = useState("");
+  const [inputValue, setInputValue] = useState(""); // Состояние для ввода
 
+  // Функция для определения языка ввода
+  const detectLanguage = (text) => {
+    const cyrillicPattern = /[а-яА-ЯёЁ]/;
+    return cyrillicPattern.test(text) ? "ru" : "en";
+  };
+
+  // Когда пользователь вводит запрос, фильтруем города
   useEffect(() => {
     if (inputValue) {
-      const getCities = async () => {
-        const cities = await fetchCities(inputValue);
-        setOptions(cities);
-      };
-
-      getCities();
+      const timeoutId = setTimeout(() => {
+        const inputLang = detectLanguage(inputValue); // Определяем язык ввода
+        const filteredCities = citiesData
+          .filter((city) => {
+            if (inputLang === "ru") {
+              return (
+                city.name_ru &&
+                city.name_ru.toLowerCase().includes(inputValue.toLowerCase())
+              );
+            } else {
+              return city.name
+                .toLowerCase()
+                .includes(inputValue.toLowerCase());
+            }
+          })
+          .map((city) => ({
+            value: city.name_ru || city.name,
+            label:
+              inputLang === "ru"
+                ? `${city.name_ru || city.name}, ${city.country}`
+                : `${city.name || city.name_ru}, ${city.country}`,
+          }));
+        setOptions(filteredCities);
+      }, 300);
+      return () => clearTimeout(timeoutId);
     } else {
       setOptions([]);
     }
@@ -51,12 +68,12 @@ export const MainSelect = ({ selectedCity, setSelectedCity }) => {
 
   return (
     <Select
-      value={options.find((option) => option.value === selectedCity)} 
-      onChange={(selectedOption) => setSelectedCity(selectedOption.value)} 
+      value={options.find((option) => option.value === selectedCity)} // Отображаем текущее значение
+      onChange={(selectedOption) => setSelectedCity(selectedOption?.value || "")} // Обновляем город
       options={options}
       styles={colourStyles}
       placeholder="Выберите город"
-      onInputChange={setInputValue}
+      onInputChange={(newValue) => setInputValue(newValue)} // Обновляем состояние при вводе
     />
   );
 };
